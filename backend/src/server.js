@@ -17,11 +17,11 @@ app.get("/books", (req, res) => {
 
 if (ENV.NODE_ENV === "production") {
   // serve static files from frontend
-  app.use(express.static(path.join(__dirname, "frontend","dist")));
+  app.use(express.static(path.join(__dirname, "frontend-dist")));
 
   // catch-all route for SPA (React/Vue/etc.)
-  app.get("/:path*", (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend-dist", "index.html"));
   });
 }
 
