@@ -7,7 +7,7 @@ import { connectDB } from "./lib/db.js";
 
 const app = express();
 
-// ESM-safe __dirname: this will be /opt/render/project/src/backend/src on Render
+// ESM-safe __dirname. On Render this becomes: /opt/render/project/src/backend/src
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -22,17 +22,14 @@ app.get("/books", (req, res) => {
 });
 
 if (ENV.NODE_ENV === "production") {
-  // Build files are copied to backend/frontend-dist in the Render build step:
-  // cp -r dist ../backend/frontend-dist
-  //
-  // __dirname = /backend/src
-  // ../frontend-dist = /backend/frontend-dist
+  // Build command copies dist here: ../backend/frontend-dist
+  // From /backend/src → ../frontend-dist = /backend/frontend-dist
   const distPath = path.join(__dirname, "../frontend-dist");
 
   // Serve static assets
   app.use(express.static(distPath));
 
-  // SPA catch-all (for React/Vite router)
+  // SPA fallback
   app.use((req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
@@ -50,8 +47,6 @@ const startServer = async () => {
 };
 
 startServer();
-
-
 
 
 
