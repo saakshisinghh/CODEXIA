@@ -1,15 +1,25 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import cors from "cors";
+import {serve} from "inngest/express";
 
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
+import {  inngest,functions} from "./lib/inngest.js";
 
 const app = express();
 
 // ESM-safe __dirname. On Render this becomes: /opt/render/project/src/backend/src
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// middleware
+app.use(express.json())
+// CREDENTITALS TRUE MEAN SERVER ALLOWS A BROWSER TO INCLUDE COOKIES ON REQUEST
+app.use(cors({origin:ENV.CLIENT_URL,credentials:true}))
+
+app.use("/api/inngest", serve ({client:inngest , functions}))
 
 // Health check
 app.get("/health", (req, res) => {
