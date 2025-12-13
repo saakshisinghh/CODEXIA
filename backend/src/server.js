@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
 import {serve} from "inngest/express";
+import {clerkMiddleware} from '@clerk/express';
 
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
@@ -18,18 +19,18 @@ const __dirname = path.dirname(__filename);
 app.use(express.json())
 // CREDENTITALS TRUE MEAN SERVER ALLOWS A BROWSER TO INCLUDE COOKIES ON REQUEST
 app.use(cors({origin:ENV.CLIENT_URL,credentials:true}))
+app.use(clerkMiddleware());
 
+// routes
 app.use("/api/inngest", serve ({client:inngest , functions}))
+app.use("/api/chat",chatRoutes)
 
-// Health check
+
+// example 
 app.get("/health", (req, res) => {
-  res.status(200).json({ message: "api is up and running" });
+ res.status(200).json({ message: "api is up and running" });
 });
 
-// Example API
-app.get("/books", (req, res) => {
-  res.status(200).json({ message: "book endpoint" });
-});
 
 if (ENV.NODE_ENV === "production") {
   // Build command copies dist here: ../backend/frontend-dist
